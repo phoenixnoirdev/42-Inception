@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    env_file: .env
+    ports:
+      - "443:443"
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - inception
+    depends_on:
+      - wordpress
+    restart: unless-stopped
+
+  wordpress:
+    build: ./wordpress
+    container_name: wordpress
+    env_file: .env
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - inception
+    depends_on:
+      - mariadb
+    secrets:
+      - wordpress_user
+      - wordpress_password
+      - wordpress_db_user
+      - wordpress_db_password
+    restart: unless-stopped
+
+  mariadb:
+    build: ./mariadb
+    container_name: mariadb
+    env_file: .env
+    secrets:
+      - mysql_user
+      - mysql_password
+      - mysql_root_password
+    volumes:
+      - mariadb:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - inception
+    restart: unless-stopped
+
+networks:
+  inception:
+    driver: bridge
+
+volumes:
+  mariadb:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${HOME}/data/mariadb
+      o: bind
+
+  wordpress:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${HOME}/data/wordpress
+      o: bind
+
+secrets:
+  mysql_user:
+    file: ${HOME}/secret/mariadb/mysql_user
+  mysql_password:
+    file: ${HOME}/secret/mariadb/mysql_password
+  mysql_root_password:
+    file: ${HOME}/secret/mariadb/mysql_root_password
+  wordpress_user:
+    file: ${HOME}/secret/wordpress/wordpress_user
+  wordpress_password:
+    file: ${HOME}/secret/wordpress/wordpress_password
+  wordpress_db_user:
+    file: ${HOME}/secret/wordpress/wordpress_db_user
+  wordpress_db_password:
+    file: ${HOME}/secret/wordpress/wordpress_db_password

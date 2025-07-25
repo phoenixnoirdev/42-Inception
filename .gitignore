@@ -1,14 +1,14 @@
-*.tar
-*.tar.*
-*.jar
-*.exe
-*.msi
-*.deb
-*.zip
-*.tgz
-*.log
-*.log.*
-*.sig
+# Secrets
+secrets/
 
-pkg/
-src/
+# variable
+#.env
+
+# Fichiers temporaires
+*.tmp
+*.log
+*.bak
+*.swp
+
+# Volumes Docker locaux
+volumes/
