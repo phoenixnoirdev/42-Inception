@@ -3,7 +3,7 @@
 # **************************************************************************** #
 
 NAME = inception
-COMPOSE = docker compose -f docker-compose.yml
+COMPOSE = docker compose -f srcs/requirements/docker-compose.yml
 UID := $(shell id -u)
 HOME_PATH := ${HOME}/data
 
@@ -11,7 +11,7 @@ HOME_PATH := ${HOME}/data
 #                                 COMMANDS                                     #
 # **************************************************************************** #
 
-.PHONY: all setup_dirs setup_secrets up down re clean fclean ps logs
+.PHONY: all setup_dirs setup_secrets up down re clean fclean fcleanall ps logs
 
 all: setup_dirs setup_secrets up
 
@@ -46,11 +46,11 @@ clean:
 	$(COMPOSE) down --volumes
 
 fclean: clean
-	@rm -rf $(HOME_PATH)/mariadb
-	@rm -rf $(HOME_PATH)/wordpress
-	@rm -rf $(HOME)/secret/mariadb
-	@rm -rf $(HOME)/secret/wordpress
+	@rm -rf $(HOME)/secret
 
+fcleanall: clean fclean
+	sudo rm -rf $(HOME_PATH)/*
+	@rm -rf $(HOME_PATH)
 ps:
 	$(COMPOSE) ps
 
