@@ -30,6 +30,12 @@ services:
       - wordpress_password
       - wordpress_db_user
       - wordpress_db_password
+    environment:
+      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_DB_USER_FILE: /run/secrets/wordpress_db_user
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/wordpress_db_password
+      WORDPRESS_DB_SSL: 0
     restart: unless-stopped
 
   mariadb:
@@ -40,6 +46,11 @@ services:
       - mysql_user
       - mysql_password
       - mysql_root_password
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER_FILE: /run/secrets/mysql_user
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
     volumes:
       - mariadb:/var/lib/mysql
     ports:
